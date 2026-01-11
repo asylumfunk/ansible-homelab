@@ -1,8 +1,21 @@
 # Helper scripts and utilities
+_ANSIBLE_PLAYBOOK ?= ansible-playbook
+_APT_GET ?= $(shell $(_COMMAND) -v apt-get)
+_BIN ?= ./bin
+_COMMAND ?= command
 _DATE ?= date
 _DD ?= dd
+_ECHO ?= echo
+_GREP ?= grep
 _GZIP ?= gzip
 _LN ?= ln
+_LSPCI ?= lspci
+_MOUNT ?= mount
+_RPI_IMAGER ?= rpi-imager
+_SED ?= sed
 _SUDO ?= sudo
+_TEE ?= tee
 _TEST ?= test
+_TOUCH ?= touch
+_UMOUNT ?= umount
 _UNLINK ?= unlink
