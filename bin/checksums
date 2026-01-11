@@ -1,0 +1,42 @@
+#!/bin/sh
+# shellcheck disable=SC2002
+set -aeu
+CHECKSUMS="${1}"
+CHECKSUM="${2:-}"
+
+test -e "${CHECKSUMS}" || {
+    echo "Missing checksum file '${CHECKSUMS}'" >/dev/stderr
+    exit 1
+}
+if [ -n "${CHECKSUM}" ]
+then
+    if ! [ -e "${CHECKSUM}" ]
+    then
+        echo "Missing file to check, '${CHECKSUM}'" >/dev/stderr
+        exit 2
+    fi
+    cat "${CHECKSUMS}" \
+    | awk -- '
+        $2 == '"\"${CHECKSUM}\""' { exit 0; };
+        ENDFILE { exit 1; };
+    ' "${CHECKSUMS}" \
+    || {
+        echo "Missing checksum in '${CHECKSUMS}' for '${CHECKSUM}'" >/dev/stderr
+        exit 3
+    }
+    cat "${CHECKSUMS}" \
+    | awk -- '
+        $2 == '"\"${CHECKSUM}\""' { print $0; exit 0; };
+    ' "${CHECKSUMS}" \
+    | sha256sum --check \
+    || {
+        echo "Invalid checksum in '${CHECKSUMS}' for '${CHECKSUM}'" >/dev/stderr
+        exit 4
+    }
+else
+    sha256sum --check "${CHECKSUMS}" \
+    || {
+        echo "Invalid checksum in '${CHECKSUMS}'" >/dev/stderr
+        exit 5
+    }
+fi
