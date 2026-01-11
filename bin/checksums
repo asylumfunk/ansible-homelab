@@ -1,5 +1,89 @@
 #!/bin/sh
 # shellcheck disable=SC2002
+#h % CHECKSUMS(1) Version 1.0 | a utility wrapper for verifying sha256 checksums
+#h % asylumfunk
+#h
+#h NAME
+#h ====
+#h
+#h **checksums** - a utility wrapper for verifying sha256 checksums
+#h
+#h
+#h SYNOPSIS
+#h ========
+#h
+#h | **checksums** *sha256-file* *[file-to-check]*
+#h | **checksums** **-h**
+#h
+#h
+#h DESCRIPTION
+#h ===========
+#h
+#h Check all sha256 sums or name a specific one to be verified
+#h
+#h
+#h OPTIONS
+#h =======
+#h
+#h **-h**
+#h : Print this help text and exit.
+#h
+#h
+#h EXAMPLES
+#h ========
+#h
+#h **checksums** *etc/sha256sum*
+#h : verify all checksums within `etc/sha256sum`
+#h
+#h **checksums** *etc/sha256sum* *var/2025-12-04-raspios-trixie-arm64-lite.img.xz*
+#h : verify _only_ checksum for `var/2025-12-04-raspios-trixie-arm64-lite.img.xz` within `etc/sha256sum`
+#h
+#h
+#h OVERVIEW
+#h ========
+#h
+#h When invoked with with just a *sha256-file*,
+#h 	this script behaves just like `sha256sum --check sha256-file`,
+#h 	just with a different exit code on error.
+#h
+#h When also invoked with a *file-to-check*,
+#h 	this script _only_ checks the status of the specified file
+#h 	among the list with *sha256-file*.
+#h
+#h
+#h EXIT STATUS
+#h ===========
+#h
+#h 0
+#h : Normal execution, checksum(s) match
+#h
+#h 1
+#h : Error, missing checksum file
+#h
+#h 2
+#h : Error, missing file to check
+#h
+#h 3
+#h : Error, missing entry for file to check in checksum file
+#h
+#h 4
+#h : Error, invalid entry for file to check in checksum file
+#h
+#h 5
+#h : Error, 1+ invalid entry in checksum file
+#h
+#h
+#h
+#h FILES
+#h =====
+#h
+#h
+#h SEE ALSO
+#h ========
+#h
+#h **sha256sum**
+while getopts ":h" option; do case ${option} in h) grep '^#h' "${0}" | sed 's/^#h \?//g'; exit;; *) ;; esac; done
+
 set -aeu
 CHECKSUMS="${1}"
 CHECKSUM="${2:-}"
