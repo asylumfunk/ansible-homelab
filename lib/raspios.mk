@@ -8,15 +8,8 @@ endif
 _SDCARD_MNT_BOOT = mnt/boot
 _SDCARD_MNT_ROOT = mnt/root
 
-_HOST_DEFAULT ?= raspberrypi
-_PASS_ENC = $(shell $(_ECHO) '$(PASS)' | openssl passwd -6 -stdin)
-_USER_CONF ?= $(_SDCARD_MNT_BOOT)/userconf.txt
-_WIFI_CONF ?= $(_SDCARD_MNT_BOOT)/wpa_supplicant.conf
-
-_ZONE_CONF = $(_SDCARD_MNT_ROOT)/etc/timezone
-_HOSTS_FILE = $(_SDCARD_MNT_ROOT)/etc/hosts
-_NMCLI_FILE = $(_SDCARD_MNT_ROOT)/var/lib/NetworkManager/NetworkManager.state
-_HOST_FILE = $(_SDCARD_MNT_ROOT)/etc/hostname
+_MNT_NETWORK_CONFIG = $(_SDCARD_MNT_BOOT)/network-config
+_MNT_USER_DATA = $(_SDCARD_MNT_BOOT)/user-data
 
 CHECKSUMS ?= etc/sha256sum
 _IMG_DATE ?= 2025-12-04
@@ -52,41 +45,22 @@ endif
 	$(_SUDO) $(_MOUNT) '$(_SDCARD_DEV_BOOT)' '$(_SDCARD_MNT_BOOT)'
 	$(_TEST) -e '$(_SDCARD_DEV_ROOT)'
 	$(_SUDO) $(_MOUNT) '$(_SDCARD_DEV_ROOT)' '$(_SDCARD_MNT_ROOT)'
-ifneq (,$(USER))
-	# Adding user:pass; $(USER):$(PASS)
-	$(_ECHO) '$(USER):$(_PASS_ENC)' | $(_SUDO) $(_TEE) '$(_USER_CONF)'
-endif
-ifneq (,$(SSH_ENABLED))
-	# RaspiOS will enable SSH access if this file exists
-	$(_SUDO) $(_TOUCH) $(_SDCARD_MNT_BOOT)/ssh
-endif
-ifneq (,$(WIFI_NAME))
-	# Enable WIFI
-	{ \
-		$(_ECHO) 'country=$(COUNTRY)'; \
-		$(_ECHO) 'ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev'; \
-		$(_ECHO) 'update_config=1'; \
-		$(_ECHO) 'network={'; \
-		$(_ECHO) '       ssid="$(WIFI_NAME)"'; \
-		$(_ECHO) '       psk="$(WIFI_PASS)"'; \
-		$(_ECHO) '       scan_ssid=1'; \
-		$(_ECHO) '}'; \
-	} | $(_SUDO) $(_TEE) '$(_WIFI_CONF)'
-	$(_SUDO) $(_SED) -i "/^WirelessEnabled=/s/=false$$/=true/" '$(_NMCLI_FILE)'
-	$(_ECHO) '#!/bin/sh' | $(_SUDO) $(_TEE) mnt/boot/firstrun.sh
-	# systemd.run=/boot/firstrun.sh systemd.run_success_action=reboot systemd.unit=kernel-command-line.target
-	$(_ECHO) sudo raspi-config nonint do_wifi_country US | $(_SUDO) $(_TEE) -a mnt/boot/firstrun.sh
-	$(_ECHO) sudo raspi-config nonint do_wifi_ssid_passphrase '$(WIFI_NAME)' '"$(WIFI_PASS)"' 0 0 | $(_SUDO) $(_TEE) -a mnt/boot/firstrun.sh
-	# nmcli radio wifi on
-endif
-ifneq (,$(TIME_ZONE))
-	# Update timezone
-	$(_ECHO) '$(TIME_ZONE)' | $(_SUDO) $(_TEE) '$(_ZONE_CONF)'
-endif
-ifneq (,$(HOST))
-	# Set hostname
-	$(_ECHO) '$(HOST)' | $(_SUDO) $(_TEE) '$(_HOST_FILE)'
-	$(_SUDO) $(_SED) -i "/127.0.1.1/s/$(_HOST_DEFAULT)/$(_HOST_FQDN) $(HOST)/" '$(_HOSTS_FILE)'
-endif
+	$(_ENV) --ignore-environment \
+		'WIFI_COUNTRY=$(WIFI_COUNTRY)' \
+		'WIFI_NAME=$(WIFI_NAME)' \
+		'WIFI_PASS=$(WIFI_PASS)' \
+		$(_ENVSUBST) <etc/network-config \
+	| $(_SUDO) $(_TEE) '$(_MNT_NETWORK_CONFIG)'
+	$(_ENV) --ignore-environment \
+		'HOST=$(HOST)' \
+		'TIME_ZONE=$(TIME_ZONE)' \
+		'WIFI_PASS=$(WIFI_PASS)' \
+		'USER=$(USER)' \
+		'PASSWD=$(_PASS_ENC)' \
+		'LOCALE=$(LOCALE)' \
+		'KEYBOARD_LAYOUT_LANG=$(KEYBOARD_LAYOUT_LANG)' \
+		'SSH_ENABLED=$(SSH_ENABLED)' \
+		$(_ENVSUBST) <etc/user-data \
+	| $(_SUDO) $(_TEE) '$(_MNT_USER_DATA)'
 	$(_SUDO) $(_UMOUNT) '$(_SDCARD_MNT_BOOT)'
 	$(_SUDO) $(_UMOUNT) '$(_SDCARD_MNT_ROOT)'

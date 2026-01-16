@@ -2,10 +2,19 @@
 BACKUP_NAME ?= sdcard
 USER ?= $(USER)
 PASS ?= $(shell $(_ECHO) $(USER) | $(_REV))
+_PASS_ENC = $(shell $(_ECHO) '$(PASS)' | $(_OPENSSL) passwd -6 -stdin)
 HOST ?= homelab
 DOMAIN ?= home.arpa
-COUNTRY ?= US
-SSH_ENABLED ?= 1
+WIFI_COUNTRY ?= US
+LOCALE ?= en_US
+KEYBOARD_LAYOUT_LANG ?= us
+SSH_ENABLED ?= true
+ifneq (true, $(SSH_ENABLED))
+SSH_ENABLED = false
+endif
 _HOST_FQDN = $(HOST).$(DOMAIN)
 TIME_ZONE ?= $(shell cat /etc/timezone)
+ifeq (,$(TIME_ZONE))
+TIME_ZONE = US/Pacific
+endif
 SDCARD_DEV ?= /dev/mmcblk0

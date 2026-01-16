@@ -7,10 +7,13 @@ _COMMAND ?= command
 _DATE ?= date
 _DD ?= dd
 _ECHO ?= echo
+_ENV ?= env
+_ENVSUBST ?= envsubst
 _GREP ?= grep
 _GZIP ?= gzip
 _LN ?= ln
 _MOUNT ?= mount
+_OPENSSL ?= openssl
 _REV ?= $(shell $(_COMMAND) -v rev)
 ifeq (,$(_REV))
 _REV = cat
