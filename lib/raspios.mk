@@ -36,7 +36,9 @@ ifneq (,$(CHECKSUMS))
 	$(_BIN)/checksums '$(CHECKSUMS)' '$(IMG)'
 endif
 	$(_SUDO) $(_RPI_IMAGER) --cli '$(IMG)' '$(SDCARD_DEV)'
+	$(_TEST) -e '$(_SDCARD_DEV_BOOT)'
 	$(_SUDO) $(_MOUNT) '$(_SDCARD_DEV_BOOT)' '$(_SDCARD_MNT_BOOT)'
+	$(_TEST) -e '$(_SDCARD_DEV_ROOT)'
 	$(_SUDO) $(_MOUNT) '$(_SDCARD_DEV_ROOT)' '$(_SDCARD_MNT_ROOT)'
 ifneq (,$(USER))
 	# Adding user:pass; $(USER):$(PASS)
