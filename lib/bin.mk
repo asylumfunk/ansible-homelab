@@ -10,6 +10,10 @@ _GREP ?= grep
 _GZIP ?= gzip
 _LN ?= ln
 _MOUNT ?= mount
+_REV ?= $(shell $(_COMMAND) -v rev)
+ifeq (,$(_REV))
+_REV = cat
+endif
 _RPI_IMAGER ?= rpi-imager
 _SED ?= sed
 _SHA256SUM ?= sha256sum

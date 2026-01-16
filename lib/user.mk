@@ -1,7 +1,7 @@
 # Defaults, should usually be overridden
 BACKUP_NAME ?= sdcard
 USER ?= $(USER)
-PASS ?= $(USER)
+PASS ?= $(shell $(_ECHO) $(USER) | $(_REV))
 HOST ?= homelab
 DOMAIN ?= home.arpa
 COUNTRY ?= US
