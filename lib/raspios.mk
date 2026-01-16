@@ -17,13 +17,26 @@ _ZONE_CONF = $(_SDCARD_MNT_ROOT)/etc/timezone
 _HOSTS_FILE = $(_SDCARD_MNT_ROOT)/etc/hosts
 _HOST_FILE = $(_SDCARD_MNT_ROOT)/etc/hostname
 
-IMG ?= var/2025-12-04-raspios-trixie-arm64-lite.img.xz
 CHECKSUMS ?= etc/sha256sum
+_IMG_DATE ?= 2025-12-04
+_IMG_ARCH ?= arm64
+_IMG_OS ?= raspios
+_IMG_RELEASE ?= trixie
+_IMG_EDITION ?= -lite
+_IMG_EDITION_ ?= $(subst -,_,$(_IMG_EDITION))
+IMG ?= var/$(_IMG_DATE)-$(_IMG_OS)-$(_IMG_RELEASE)-$(_IMG_ARCH)$(_IMG_EDITION).img.xz
+IMG_URL ?= https://downloads.raspberrypi.com/$(_IMG_OS)$(_IMG_EDITION_)_$(_IMG_ARCH)/images/$(_IMG_OS)$(_IMG_EDITION_)_$(_IMG_ARCH)-$(_IMG_DATE)/$(_IMG_DATE)-$(_IMG_OS)-$(_IMG_RELEASE)-$(_IMG_ARCH)$(_IMG_EDITION).img.xz
+IMG_URL_SUM ?= $(IMG_URL).sha256
 _DD_BS_WRITE ?= 32M
 
+$(IMG):
+	$(_WGET) --no-clobber --output-document='$(IMG)' '$(IMG_URL)'
+	$(_WGET) --output-document=- '$(IMG_URL_SUM)' \
+	| $(_AWK) '{print $$1, " var/"$$2}' \
+	>>'$(CHECKSUMS)'
 
 .PHONY: sdcard
-sdcard:
+sdcard: $(IMG) dist
 ifneq (,$(CHECKSUMS))
 	# Verify checksums
 	$(_BIN)/checksums '$(CHECKSUMS)' '$(IMG)'

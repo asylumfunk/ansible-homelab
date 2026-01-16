@@ -1,6 +1,7 @@
 # Helper scripts and utilities
 _ANSIBLE_PLAYBOOK ?= ansible-playbook
 _APT_GET ?= $(shell $(_COMMAND) -v apt-get)
+_AWK ?= awk
 _BIN ?= ./bin
 _COMMAND ?= command
 _DATE ?= date
@@ -22,4 +23,5 @@ _TEST ?= test
 _TOUCH ?= touch
 _UMOUNT ?= umount
 _UNLINK ?= unlink
+_WGET ?= wget
 _XZCAT ?= xzcat
