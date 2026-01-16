@@ -28,6 +28,7 @@ IMG ?= var/$(_IMG_DATE)-$(_IMG_OS)-$(_IMG_RELEASE)-$(_IMG_ARCH)$(_IMG_EDITION).i
 IMG_URL ?= https://downloads.raspberrypi.com/$(_IMG_OS)$(_IMG_EDITION_)_$(_IMG_ARCH)/images/$(_IMG_OS)$(_IMG_EDITION_)_$(_IMG_ARCH)-$(_IMG_DATE)/$(_IMG_DATE)-$(_IMG_OS)-$(_IMG_RELEASE)-$(_IMG_ARCH)$(_IMG_EDITION).img.xz
 IMG_URL_SUM ?= $(IMG_URL).sha256
 _DD_BS_WRITE ?= 32M
+BACKUP_FIRST = 1
 
 $(IMG):
 	$(_WGET) --no-clobber --output-document='$(IMG)' '$(IMG_URL)'
@@ -36,7 +37,11 @@ $(IMG):
 	>>'$(CHECKSUMS)'
 
 .PHONY: sdcard
+ifeq (,$(BACKUP_FIRST))
+sdcard: $(IMG)
+else
 sdcard: $(IMG) dist
+endif
 ifneq (,$(CHECKSUMS))
 	# Verify checksums
 	$(_BIN)/checksums '$(CHECKSUMS)' '$(IMG)'
