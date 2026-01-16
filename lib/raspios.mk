@@ -26,7 +26,6 @@ endif
 
 .PHONY: sdcard
 sdcard: requirements
-	$(_TEST) -e '$(SDCARD_DEV)' || $(_LSPCI) -knn | $(_GREP) -iA2 card
 ifneq (,$(CHECKSUMS))
 	$(_BIN)/checksums '$(CHECKSUMS)' '$(IMG)'
 endif

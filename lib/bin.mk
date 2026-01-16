@@ -9,7 +9,6 @@ _ECHO ?= echo
 _GREP ?= grep
 _GZIP ?= gzip
 _LN ?= ln
-_LSPCI ?= lspci
 _MOUNT ?= mount
 _RPI_IMAGER ?= rpi-imager
 _SED ?= sed
