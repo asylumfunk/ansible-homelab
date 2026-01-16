@@ -14,7 +14,6 @@ _REV ?= $(shell $(_COMMAND) -v rev)
 ifeq (,$(_REV))
 _REV = cat
 endif
-_RPI_IMAGER ?= rpi-imager
 _SED ?= sed
 _SHA256SUM ?= sha256sum
 _SUDO ?= sudo
@@ -23,3 +22,4 @@ _TEST ?= test
 _TOUCH ?= touch
 _UMOUNT ?= umount
 _UNLINK ?= unlink
+_XZCAT ?= xzcat

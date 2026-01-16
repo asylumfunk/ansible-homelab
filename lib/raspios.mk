@@ -19,23 +19,16 @@ _HOST_FILE = $(_SDCARD_MNT_ROOT)/etc/hostname
 
 IMG ?= var/2025-12-04-raspios-trixie-arm64-lite.img.xz
 CHECKSUMS ?= etc/sha256sum
+_DD_BS_WRITE ?= 32M
 
-.PHONY: requirements
-requirements:
-ifeq (,$(shell $(_COMMAND) -v $(_RPI_IMAGER)))
-ifneq (,$(_APT_GET))
-	$(_COMMAND) -v '$(_RPI_IMAGER)' >/dev/null \
-	|| $(_SUDO) $(_APT_GET) install '$(_RPI_IMAGER)'
-endif
-endif
 
 .PHONY: sdcard
-sdcard: requirements
+sdcard:
 ifneq (,$(CHECKSUMS))
 	# Verify checksums
 	$(_BIN)/checksums '$(CHECKSUMS)' '$(IMG)'
 endif
-	$(_SUDO) $(_RPI_IMAGER) --cli '$(IMG)' '$(SDCARD_DEV)'
+	$(_XZCAT) '$(IMG)' | $(_SUDO) $(_DD) of='$(SDCARD_DEV)' bs=$(_DD_BS_WRITE) status=progress conv=fdatasync
 	$(_TEST) -e '$(_SDCARD_DEV_BOOT)'
 	$(_SUDO) $(_MOUNT) '$(_SDCARD_DEV_BOOT)' '$(_SDCARD_MNT_BOOT)'
 	$(_TEST) -e '$(_SDCARD_DEV_ROOT)'
