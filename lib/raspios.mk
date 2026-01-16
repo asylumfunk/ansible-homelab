@@ -32,12 +32,14 @@ endif
 .PHONY: sdcard
 sdcard: requirements
 ifneq (,$(CHECKSUMS))
+	# Verify checksums
 	$(_BIN)/checksums '$(CHECKSUMS)' '$(IMG)'
 endif
 	$(_SUDO) $(_RPI_IMAGER) --cli '$(IMG)' '$(SDCARD_DEV)'
 	$(_SUDO) $(_MOUNT) '$(_SDCARD_DEV_BOOT)' '$(_SDCARD_MNT_BOOT)'
 	$(_SUDO) $(_MOUNT) '$(_SDCARD_DEV_ROOT)' '$(_SDCARD_MNT_ROOT)'
 ifneq (,$(USER))
+	# Adding user:pass; $(USER):$(PASS)
 	$(_ECHO) '$(USER):$(_PASS_ENC)' | $(_SUDO) $(_TEE) '$(_USER_CONF)'
 endif
 ifneq (,$(SSH_ENABLED))
@@ -45,6 +47,7 @@ ifneq (,$(SSH_ENABLED))
 	$(_SUDO) $(_TOUCH) $(_SDCARD_MNT_BOOT)/ssh
 endif
 ifneq (,$(WIFI_NAME))
+	# Enable WIFI
 	{ \
 		$(_ECHO) 'country=$(COUNTRY)'; \
 		$(_ECHO) 'ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev'; \
@@ -57,9 +60,11 @@ ifneq (,$(WIFI_NAME))
 	} | $(_SUDO) $(_TEE) '$(_WIFI_CONF)'
 endif
 ifneq (,$(TIME_ZONE))
+	# Update timezone
 	$(_ECHO) '$(TIME_ZONE)' | $(_SUDO) $(_TEE) '$(_ZONE_CONF)'
 endif
 ifneq (,$(HOST))
+	# Set hostname
 	$(_ECHO) '$(HOST)' | $(_SUDO) $(_TEE) '$(_HOST_FILE)'
 	$(_SUDO) $(_SED) -i "/127.0.1.1/s/$(_HOST_DEFAULT)/$(_HOST_FQDN) $(HOST)/" '$(_HOSTS_FILE)'
 endif
