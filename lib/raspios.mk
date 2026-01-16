@@ -1,5 +1,10 @@
+ifeq (12,$(shell expr match '$(SDCARD_DEV)' '^/dev/mmcblk[0-9]'))
 _SDCARD_DEV_BOOT = $(SDCARD_DEV)p1
 _SDCARD_DEV_ROOT = $(SDCARD_DEV)p2
+else
+_SDCARD_DEV_BOOT = $(SDCARD_DEV)1
+_SDCARD_DEV_ROOT = $(SDCARD_DEV)2
+endif
 _SDCARD_MNT_BOOT = mnt/boot
 _SDCARD_MNT_ROOT = mnt/root
 
