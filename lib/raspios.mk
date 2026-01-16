@@ -15,6 +15,7 @@ _WIFI_CONF ?= $(_SDCARD_MNT_BOOT)/wpa_supplicant.conf
 
 _ZONE_CONF = $(_SDCARD_MNT_ROOT)/etc/timezone
 _HOSTS_FILE = $(_SDCARD_MNT_ROOT)/etc/hosts
+_NMCLI_FILE = $(_SDCARD_MNT_ROOT)/var/lib/NetworkManager/NetworkManager.state
 _HOST_FILE = $(_SDCARD_MNT_ROOT)/etc/hostname
 
 CHECKSUMS ?= etc/sha256sum
@@ -71,6 +72,12 @@ ifneq (,$(WIFI_NAME))
 		$(_ECHO) '       scan_ssid=1'; \
 		$(_ECHO) '}'; \
 	} | $(_SUDO) $(_TEE) '$(_WIFI_CONF)'
+	$(_SUDO) $(_SED) -i "/^WirelessEnabled=/s/=false$$/=true/" '$(_NMCLI_FILE)'
+	$(_ECHO) '#!/bin/sh' | $(_SUDO) $(_TEE) mnt/boot/firstrun.sh
+	# systemd.run=/boot/firstrun.sh systemd.run_success_action=reboot systemd.unit=kernel-command-line.target
+	$(_ECHO) sudo raspi-config nonint do_wifi_country US | $(_SUDO) $(_TEE) -a mnt/boot/firstrun.sh
+	$(_ECHO) sudo raspi-config nonint do_wifi_ssid_passphrase '$(WIFI_NAME)' '"$(WIFI_PASS)"' 0 0 | $(_SUDO) $(_TEE) -a mnt/boot/firstrun.sh
+	# nmcli radio wifi on
 endif
 ifneq (,$(TIME_ZONE))
 	# Update timezone
