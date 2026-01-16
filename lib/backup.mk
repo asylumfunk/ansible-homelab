@@ -8,6 +8,7 @@ _BACKUP_VERSION = $(_BACKUP_NAME_FULL)_$(shell $(_DATE) '+%Y%m%d-%H%M').img.gz
 $(_BACKUP_VERSION):
 	$(_SUDO) $(_DD) if='$(SDCARD_DEV)' bs=4M status=progress \
 	| $(_GZIP) --to-stdout >'$(@)'
+	$(_SHA256SUM) '$(_BACKUP_VERSION)' >>'$(CHECKSUMS)'
 
 ## Tag the latest backup
 $(_BACKUP_LATEST): $(_BACKUP_VERSION)

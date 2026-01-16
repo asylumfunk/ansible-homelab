@@ -13,6 +13,7 @@ _LSPCI ?= lspci
 _MOUNT ?= mount
 _RPI_IMAGER ?= rpi-imager
 _SED ?= sed
+_SHA256SUM ?= sha256sum
 _SUDO ?= sudo
 _TEE ?= tee
 _TEST ?= test
