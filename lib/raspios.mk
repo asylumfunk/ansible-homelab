@@ -34,7 +34,7 @@ $(IMG):
 ifeq (,$(BACKUP_FIRST))
 sdcard: $(IMG)
 else
-sdcard: $(IMG) dist
+sdcard: $(IMG) backup
 endif
 ifneq (,$(CHECKSUMS))
 	# Verify checksums
