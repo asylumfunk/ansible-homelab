@@ -3,6 +3,7 @@ BACKUP_NAME ?= sdcard
 USER ?= $(USER)
 PASS ?= $(shell $(_ECHO) $(USER) | $(_REV))
 _PASS_ENC = $(shell $(_ECHO) '$(PASS)' | $(_OPENSSL) passwd -6 -stdin)
+GECOS ?= the default user account
 HOST ?= homelab
 DOMAIN ?= home.arpa
 WIFI_COUNTRY ?= US

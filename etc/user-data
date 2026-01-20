@@ -13,7 +13,7 @@ groups:
   - 'docker': ['docker']
 users:
   - name: '${USER}'
-    # gecos: Mr. Robot
+    gecos: '${GECOS}'
     primary_group: '${USER}'
     groups: users,adm,dialout,audio,netdev,video,plugdev,cdrom,games,input,gpio,spi,i2c,render,sudo
     # ssh_import_id: foobar
