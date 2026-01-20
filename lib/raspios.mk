@@ -64,3 +64,13 @@ endif
 	| $(_SUDO) $(_TEE) '$(_MNT_USER_DATA)'
 	$(_SUDO) $(_UMOUNT) '$(_SDCARD_MNT_BOOT)'
 	$(_SUDO) $(_UMOUNT) '$(_SDCARD_MNT_ROOT)'
+
+.PHONY: mount
+mount:
+	$(_SUDO) $(_MOUNT) '$(_SDCARD_DEV_BOOT)' '$(_SDCARD_MNT_BOOT)'
+	$(_SUDO) $(_MOUNT) '$(_SDCARD_DEV_ROOT)' '$(_SDCARD_MNT_ROOT)'
+
+.PHONY: umount
+umount:
+	$(_SUDO) $(_UMOUNT) '$(_SDCARD_MNT_BOOT)'
+	$(_SUDO) $(_UMOUNT) '$(_SDCARD_MNT_ROOT)'
