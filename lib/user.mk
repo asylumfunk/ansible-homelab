@@ -12,6 +12,10 @@ SSH_ENABLED ?= true
 ifneq (true, $(SSH_ENABLED))
 SSH_ENABLED = false
 endif
+SSH_PASS_ENABLED ?= false
+ifneq (true, $(SSH_PASS_ENABLED))
+SSH_PASS_ENABLED = false
+endif
 _HOST_FQDN = $(HOST).$(DOMAIN)
 TIME_ZONE ?= $(shell cat /etc/timezone)
 ifeq (,$(TIME_ZONE))

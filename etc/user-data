@@ -7,7 +7,7 @@ locale: '${LOCALE}'
 keyboard:
   layout: '${KEYBOARD_LAYOUT_LANG}'
 enable_ssh: '${SSH_ENABLED}'
-ssh_pwauth: true
+ssh_pwauth: '${SSH_PASS_ENABLED}'
 groups:
   - '${USER}': ['${USER}']
   - 'docker': ['docker']
