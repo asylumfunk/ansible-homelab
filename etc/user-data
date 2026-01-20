@@ -8,6 +8,7 @@ keyboard:
   layout: '${KEYBOARD_LAYOUT_LANG}'
 enable_ssh: '${SSH_ENABLED}'
 ssh_pwauth: '${SSH_PASS_ENABLED}'
+disable_root: '${SSH_ROOT_DISABLED}'
 groups:
   - '${USER}': ['${USER}']
   - 'docker': ['docker']
