@@ -1,0 +1,7 @@
+- name: "Setup | apt | ensure added base packages"
+  become: true
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    update_cache: "{{ docker_apt_cache_update }}"
+    cache_valid_time: "{{ docker_apt_cache_time }}"
+  with_items: "{{ docker_apt_requirements }}"

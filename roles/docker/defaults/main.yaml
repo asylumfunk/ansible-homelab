@@ -1,0 +1,5 @@
+docker_apt_cache_time: 86400
+docker_apt_cache_update: true
+docker_apt_requirements:
+  - docker.io
+  - docker-compose

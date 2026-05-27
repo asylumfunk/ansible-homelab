@@ -1,4 +1,5 @@
 # Helper scripts and utilities
+_ANSIBLE_LINT ?= ansible-lint
 _ANSIBLE_PLAYBOOK ?= ansible-playbook
 _APT_GET ?= $(shell $(_COMMAND) -v apt-get)
 _AWK ?= awk
@@ -14,6 +15,7 @@ _GZIP ?= gzip
 _LN ?= ln
 _MOUNT ?= mount
 _OPENSSL ?= openssl
+_PIP ?= pip
 _REV ?= $(shell $(_COMMAND) -v rev)
 ifeq (,$(_REV))
 _REV = cat
