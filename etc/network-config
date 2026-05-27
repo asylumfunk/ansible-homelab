@@ -1,0 +1,12 @@
+network:
+  version: 2
+  wifis:
+    renderer: NetworkManager
+    wlan0:
+      dhcp4: true
+      regulatory-domain: "${WIFI_COUNTRY}"
+      access-points:
+        "${WIFI_NAME}":
+          password: "${WIFI_PASS}"
+      # Don't wait at boot for this connection to connect successfully
+      optional: true
