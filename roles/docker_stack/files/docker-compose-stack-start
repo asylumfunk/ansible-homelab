@@ -1,0 +1,21 @@
+#!/bin/sh
+pwd="$(dirname "$(dirname "${0}")")"
+service="$(basename "${pwd}")"
+
+compose() {
+    docker-compose --project-directory="${pwd}" "${@}"
+}
+
+id="$(compose ps -q "${service}")"
+if [ -z "${id}" ] || [ -z "$(docker ps -q --no-trunc | grep "${id}")" ]
+then
+  echo "start"
+  compose up --detach --no-recreate --pull=missing
+  exit 1
+else
+  echo "restart"
+  compose restart
+  exit 0
+fi
+echo "error"
+exit 2
