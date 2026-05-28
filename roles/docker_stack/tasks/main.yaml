@@ -1,0 +1,48 @@
+- name: "Setup | group | add | {{ docker_stack_group }}"
+  become: true
+  ansible.builtin.group:
+    name: "{{ docker_stack_group }}"
+- name: "Setup | user | add | {{ docker_stack_user }}"
+  become: true
+  ansible.builtin.user:
+    name: "{{ docker_stack_user }}"
+    group: "{{ docker_stack_group }}"
+    groups: docker
+- name: "Setup | mkdirs | {{ docker_stack_root_path }}/..."
+  become: true
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner | default(docker_stack_user, true) }}"
+    group: "{{ item.group | default(docker_stack_group, true) }}"
+    mode: "{{ item.mode | default(docker_stack_root_chmod, true) }}"
+  with_items: "{{ docker_stack_dirs }}"
+- name: "Setup | docker-compose | file | docker-compose.yaml"
+  become: true
+  ansible.builtin.template:
+    src: docker-compose.yaml.j2
+    dest: "{{ docker_stack_compose_path }}"
+    owner: "{{ item.value.owner | default(docker_stack_user, true) }}"
+    group: "{{ item.value.group | default(docker_stack_group, true) }}"
+    mode: "{{ docker_stack_etc_file_chmod }}"
+- name: "Setup | docker-compose | create bin"
+  become: true
+  ansible.builtin.copy:
+    src: docker-compose-stack-start
+    dest: "{{ docker_stack_script_start_path }}"
+    owner: "{{ item.value.owner | default(docker_stack_user, true) }}"
+    group: "{{ item.value.group | default(docker_stack_group, true) }}"
+    mode: "0755"
+- name: "Setup | docker-compose | start | shell"
+  become: true
+  when: not docker_stack_ansible_compose_use_module
+  ansible.builtin.command: "{{ docker_stack_script_start_path }}"
+  register: _docker_stack_output
+  changed_when: "_docker_stack_output.rc == 1"
+  failed_when: "_docker_stack_output.rc > 1"
+- name: "Setup | docker-compose | start | ansible"
+  when: docker_stack_ansible_compose_use_module
+  become: true
+  community.docker.docker_compose:
+    project_src: "{{ docker_stack_root_path }}"
+  register: _docker_stack_output

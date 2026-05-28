@@ -1,0 +1,17 @@
+{{ ansible_managed | comment }}
+version: '2'
+services:
+  "{{DOCKER_STACK_NAME}}":
+    container_name: "{{DOCKER_STACK_NAME}}"
+    image: "{{DOCKER_STACK_IMAGE}}"
+    ports: "{{DOCKER_STACK_PORTS}}"
+    environment: "{{DOCKER_STACK_ENVIRONMENT}}"
+    volumes: "{{DOCKER_STACK_VOLUMES}}"
+    cap_add: "{{DOCKER_STACK_CAPABILITIES }}"
+    restart: "{{DOCKER_STACK_RESTART_POLICY}}"
+{% if DOCKER_STACK_NETWORKS_ATTACH %}
+    networks: "{{DOCKER_STACK_NETWORKS_ATTACH}}"
+{% endif %}
+{% if DOCKER_STACK_NETWORKS_DEFINE %}
+networks: "{{DOCKER_STACK_NETWORKS_DEFINE}}
+{% endif %}

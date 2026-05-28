@@ -1,0 +1,41 @@
+---
+# Container name
+DOCKER_STACK_NAME: stack  # noqa: var-naming[no-role-prefix]
+# Container image
+DOCKER_STACK_IMAGE: alpine/alpine:latest  # noqa: var-naming[no-role-prefix]
+
+# Container capabilities; https://man7.org/linux/man-pages/man7/capabilities.7.html
+DOCKER_STACK_CAPABILITIES: []  # noqa: var-naming[no-role-prefix]
+# Container environment variables
+DOCKER_STACK_ENVIRONMENT: {}  # noqa: var-naming[no-role-prefix]
+# Container network definition and use
+DOCKER_STACK_NETWORKS_ATTACH: []  # noqa: var-naming[no-role-prefix]
+DOCKER_STACK_NETWORKS_DEFINE: {}  # noqa: var-naming[no-role-prefix]
+# Container port maps
+DOCKER_STACK_PORTS: []  # noqa: var-naming[no-role-prefix]
+# Container restart policy
+DOCKER_STACK_RESTART_POLICY: unless-stopped  # noqa: var-naming[no-role-prefix]
+# Container volume mounts
+DOCKER_STACK_VOLUMES: []  # noqa: var-naming[no-role-prefix]
+
+docker_stack_base: '/opt/docker'
+docker_stack_root_path: "{{ docker_stack_base }}/{{ DOCKER_STACK_NAME }}"
+docker_stack_root_chmod: '0755'
+docker_stack_etc_path: "{{ docker_stack_root_path }}/etc"
+docker_stack_etc_chmod: '0755'
+docker_stack_etc_file_chmod: '0644'
+docker_stack_bin_path: "{{ docker_stack_root_path }}/bin"
+docker_stack_bin_chmod: '0755'
+docker_stack_compose_path: "{{ docker_stack_root_path }}/docker-compose.yaml"
+docker_stack_script_start_path: "{{ docker_stack_bin_path }}/docker-compose-{{ DOCKER_STACK_NAME }}-start"
+docker_stack_dirs:
+  - path: "{{ docker_stack_root_path }}"
+    chmod: "{{ docker_stack_root_chmod }}"
+  - path: "{{ docker_stack_etc_path }}"
+    chmod: "{{ docker_stack_etc_chmod }}"
+  - path: "{{ docker_stack_bin_path }}"
+    chmod: "{{ docker_stack_bin_chmod }}"
+docker_stack_user: "{{ DOCKER_STACK_NAME }}"
+docker_stack_group: "{{ DOCKER_STACK_NAME }}"
+docker_stack_arch: "{{ ansible_architecture | default('') }}"
+docker_stack_ansible_compose_use_module: "{{ docker_stack_arch != 'armv6l' }}"
