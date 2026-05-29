@@ -1,0 +1,22 @@
+---
+dependencies:
+  - role: docker_stack
+    vars:
+      DOCKER_STACK_NAME: gitea
+      DOCKER_STACK_IMAGE: docker.gitea.com/gitea:1.25.3
+      DOCKER_STACK_ENVIRONMENT:
+        - USER_UID=1000
+        - USER_GID=1000
+      DOCKER_STACK_NETWORKS_DEFINE:
+        gitea:
+          external: false
+      DOCKER_STACK_NETWORKS_ATTACH:
+        - gitea
+      DOCKER_STACK_PORTS:
+        - '3000:3000'
+        - '222:22'
+      DOCKER_STACK_RESTART_POLICY: always
+      DOCKER_STACK_VOLUMES:
+        - ./var:/data
+        - /etc/timezone:/etc/timezone:ro
+        - /etc/localtime:/etc/localtime:ro
